@@ -1,4 +1,4 @@
-name: Run Unit Tests & SonarCloud Analysis
+name: Run Unit Tests & SonarCloud Analysis (Yarn)
 
 on:
   push:
@@ -15,32 +15,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          # Cần fetch toàn bộ lịch sử để SonarCloud có thể phân tích chính xác
-          # đặc biệt là cho các tính năng "New Code" và "Branch Analysis".
-          fetch-depth: 0
+          fetch-depth: 0 # Cần fetch toàn bộ lịch sử để SonarCloud phân tích chính xác
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18' # Sử dụng phiên bản Node.js phù hợp với dự án của bạn
+          cache: 'yarn' # Kích hoạt caching cho Yarn
 
       - name: Install dependencies
         run: |
-          npm ci # 'npm ci' đảm bảo một bản cài đặt sạch và nhất quán trong môi trường CI
-          # Nếu bạn dùng Yarn, hãy thay bằng yarn install --frozen-lockfile
+          yarn install --frozen-lockfile # Sử dụng yarn install với cờ --frozen-lockfile để cài đặt nhất quán
+          # Đây là lệnh tương đương với 'npm ci'
 
       - name: Run Unit Tests with Coverage
         run: |
           # Chạy Jest với cờ --coverage để tạo báo cáo LCOV
-          # và sử dụng jest-junit để tạo báo cáo JUnit (đã cấu hình trong jest.config.js)
-          # --ci để báo hiệu Jest đang chạy trong môi trường CI
-          # --reporters=default --reporters=jest-junit để đảm bảo cả console output và JUnit XML
-          npm test -- --coverage --ci --reporters=default --reporters=jest-junit
+          # và sử dụng jest-junit (đã cấu hình trong jest.config.js)
+          # Yarn chạy các script trong package.json, không cần '--'
+          yarn test --coverage --ci --reporters=default --reporters=jest-junit
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master # Sử dụng action chính thức của SonarSource
         env:
-          # GITHUB_TOKEN được cung cấp tự động bởi GitHub Actions, cần cho tính năng PR decoration
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # SONAR_TOKEN là secret bạn đã cấu hình
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Tự động cung cấp bởi GitHub Actions, cần cho PR decoration
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Secret bạn đã cấu hình
