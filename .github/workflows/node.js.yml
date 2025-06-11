@@ -44,3 +44,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # SONAR_TOKEN là secret bạn đã cấu hình
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }} # Khóa dự án SonarCloud
