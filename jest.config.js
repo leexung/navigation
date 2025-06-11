@@ -1,5 +1,6 @@
 module.exports = {
   setupFiles: ["<rootDir>/jestSetupFile.js"],
+  preset: "jest-expo",
   collectCoverageFrom: [
     "(app|components|hooks|stores|lib|providers)/**/*.{ts,tsx}",
   ],
